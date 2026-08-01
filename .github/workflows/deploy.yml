@@ -32,7 +32,7 @@ jobs:
           echo "FLASK_ENV=production" >> .env
 
       - name: Start Docker Compose
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Health Check
         run: |
