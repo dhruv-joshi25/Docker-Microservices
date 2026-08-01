@@ -1,0 +1,58 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up for Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create env file
+        run: |
+          echo "POSTGRES_DB=appdb" >> .env
+          echo "POSTGRES_USER=admin" >> .env
+          echo "POSTGRES_PASSWORD=secret123" >> .env
+          echo "FLASK_ENV=production" >> .env
+
+      - name: Start Docker Compose
+        run: docker-compose up -d
+
+      - name: Health Check
+        run: |
+          sleep 10
+          curl -f http://localhost:8000/api/health || exit 1
+
+      - name: Tear down Docker Compose
+        if: always()
+        run: docker-compose down
