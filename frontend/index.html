@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Microservices App</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+    button { padding: 10px 20px; margin: 10px; cursor: pointer; background: #1F3864; color: white; border: none; border-radius: 5px; }
+    #response { margin-top: 20px; padding: 20px; background: white; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Docker Microservices Demo</h1>
+  <button onclick="checkHealth()">Check Backend Health</button>
+  <button onclick="getMessage()">Get Message</button>
+  <div id="response">Click a button to call the backend API</div>
+  <script>
+    async function checkHealth() {
+      const res = await fetch('/api/health');
+      const data = await res.json();
+      document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+    }
+    async function getMessage() {
+      const res = await fetch('/api/message');
+      const data = await res.json();
+      document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
